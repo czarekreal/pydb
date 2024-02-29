@@ -63,21 +63,25 @@ class files:
         file.write(content)
         file.close()
 
+        
 class database:
 
-    def create_db(name):
+    def __init__(self, name):
 
         #check type
         if type(name) != str:
             raise Exception('Name can only be a string')
         
          #check for db path
-        if os.path.exists(name):
-            raise Exception("Database exists!")
+        if not os.path.exists(name):
+            os.mkdir(name)
         
-        os.mkdir(name)
+        self.name = name
 
-    def get_db(name,content,create_on_error):
+
+    def get(self,reg_name):
+
+        name = self.name
 
         #check type
         if type(name) != str:
@@ -88,17 +92,16 @@ class database:
             raise Exception("Database doesn't exists!")
         
         #check for db content
-        if not os.path.exists(f'{name}\\{content}'):
-            if create_on_error:
-                database.create_db(name=name)
-            else:
-                raise Exception("Database reference doesn't exists!")
+        if not os.path.exists(f'{name}\\{reg_name}'):
+            raise Exception("Database reference doesn't exists!")
         
         #get database content
-        cont = files.read_file(f"{name}\\{content}")
+        cont = files.read_file(f"{name}\\{reg_name}")
         return cont
     
-    def add_to_db(name,content,data,create_on_error):
+    def add(self,reg_name,data):
+
+        name = self.name
 
         #check type
         if type(name) != str:
@@ -106,14 +109,12 @@ class database:
         
         #check for db path
         if not os.path.exists(name):
-            if create_on_error:
-                database.create_db(name=name)
-            else:
-                raise Exception("Database doesn't exists!")
+            raise Exception("Database doesn't exists!")
         
         #check for db content
-        if os.path.exists(f'{name}\\{content}'):
+        if os.path.exists(f'{name}\\{reg_name}'):
             raise Exception("Database reference exists!")
         
-        files.create_file(f'{name}\\{content}')
-        files.write_to_file(f'{name}\\{content}',data,True,True)
+        files.create_file(f'{name}\\{reg_name}')
+        files.write_to_file(f'{name}\\{reg_name}',data,True,True)
+
